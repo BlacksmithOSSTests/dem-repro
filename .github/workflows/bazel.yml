@@ -9,13 +9,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Set up Bazel
         uses: bazel-contrib/setup-bazel@0.9.1
         with:
-          bazelisk-cache: true
           disk-cache: true
           cache-version: 2
+
+      - name: Clean bazel directories
+        run: |
+          sudo rm -rf /home/runner/.cache/bazel/_bazel_runner
+          sudo rm -rf ~/.cache/bazel/_bazel_runner
+
 
       - name: Run bazel build
         run: |

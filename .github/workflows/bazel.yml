@@ -7,25 +7,42 @@ jobs:
     runs-on: blacksmith
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       
       - name: Set up Bazel
-        uses: bazel-contrib/setup-bazel@0.9.1
+        uses: useblacksmith/setup-bazel@v1
         with:
-          disk-cache: true
-          cache-version: 2
+          bazelisk-cache: true
 
-      - name: Clean bazel directories
+      - name: Add bazel-remote directories
         run: |
-          sudo rm -rf /home/runner/.cache/bazel/_bazel_runner
-          sudo rm -rf ~/.cache/bazel/_bazel_runner
+          mkdir -p ${{ github.workspace }}/../bazel-remote/bin
+          BAZEL_REMOTE_DIR="$(realpath ${{ github.workspace }}/../bazel-remote)"
+          echo "BAZEL_REMOTE_DIR=$BAZEL_REMOTE_DIR" >> $GITHUB_ENV
+          echo "PATH=$PATH:$BAZEL_REMOTE_DIR/bin" >> $GITHUB_ENV
 
+      - name: Download bazel-remote
+        run: |
+          wget -O $BAZEL_REMOTE_DIR/bin/bazel-remote \
+            https://github.com/buchgr/bazel-remote/releases/download/v2.4.4/bazel-remote-2.4.4-linux-x86_64 \
+          && chmod +x $BAZEL_REMOTE_DIR/bin/bazel-remote
 
       - name: Run bazel build
         run: |
+          bazel-remote -port 8080 \
+            --dir $BAZEL_REMOTE_DIR/cache \
+            --max_size 6 \
+            --access_log_level=none &
+          bazel_remote_pid=$!
+          sleep .1
+          if ! kill -0 $bazel_remote_pid; then
+            echo "Bazel remote failed to start"
+            exit 1
+          fi
           bazel \
             --bazelrc=.aspect/bazelrc/ci.bazelrc \
             build \
-            --config=clippy \
+            --remote_cache=http://localhost:8080 \
             //...
+          kill $bazel_remote_pid
+          wait $bazel_remote_pid

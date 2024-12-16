@@ -1,4 +1,5 @@
-# Common Bazel settings for CI environment
-startup --output_base=~/.cache/bazel/_bazel_runner
+build --announce_rc
+build --show_timestamps
 build --color=yes
-test --test_output=errors
+build --remote_download_toplevel
+build --remote_upload_local_results

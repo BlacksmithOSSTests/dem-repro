@@ -1,0 +1,26 @@
+name: Minimal Bazel Build
+on: [push]
+
+jobs:
+  build:
+    name: Bazel
+    runs-on: blacksmith
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@v0.9.1
+        with:
+          bazelisk-cache: true
+          disk-cache: true
+          cache-version: 2
+
+      - name: Run bazel build
+        run: |
+          bazel \
+            --bazelrc=.aspect/bazelrc/ci.bazelrc \
+            build \
+            --config=clippy \
+            //...

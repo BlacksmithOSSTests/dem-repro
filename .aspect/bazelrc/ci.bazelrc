@@ -1,0 +1,4 @@
+# Common Bazel settings for CI environment
+startup --output_base=~/.cache/bazel/_bazel_runner
+build --color=yes
+test --test_output=errors

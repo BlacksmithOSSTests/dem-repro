@@ -29,12 +29,7 @@ jobs:
 
       - name: Check permissions
         run: |
-          ls -la ~/.cache/bazel
-          ls -la ~/.cache/bazel/_bazel_runner
           ls -la ~/.cache
-
-      - name: Run bazel build
-        run: |
           bazel-remote -port 8080 \
             --dir $BAZEL_REMOTE_DIR/cache \
             --max_size 6 \
@@ -45,6 +40,11 @@ jobs:
             echo "Bazel remote failed to start"
             exit 1
           fi
+          ls -la ~/.cache/bazel
+          ls -la ~/.cache/bazel/_bazel_runner
+
+      - name: Run bazel build
+        run: |
           bazel \
             --bazelrc=.aspect/bazelrc/ci.bazelrc \
             build \

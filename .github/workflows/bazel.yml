@@ -43,7 +43,7 @@ jobs:
 
       - name: Run bazel build
         run: |
-          sudo bazel \
+          sudo -u runner bazel \
             --bazelrc=.aspect/bazelrc/ci.bazelrc \
             build \
             --remote_cache=http://localhost:8080 \

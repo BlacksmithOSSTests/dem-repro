@@ -40,8 +40,6 @@ jobs:
             echo "Bazel remote failed to start"
             exit 1
           fi
-          ls -la ~/.cache/bazel
-          ls -la ~/.cache/bazel/_bazel_runner
 
       - name: Run bazel build
         run: |

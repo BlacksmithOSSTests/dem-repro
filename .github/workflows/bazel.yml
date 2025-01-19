@@ -14,6 +14,7 @@ jobs:
         with:
           bazelisk-cache: true
           cache-version: 3
+          external-cache: true
 
       - name: Add bazel-remote directories
         run: |

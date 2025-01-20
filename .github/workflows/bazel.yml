@@ -10,13 +10,11 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Bazel
-        uses: useblacksmith/setup-bazel@debug-external
+        uses: useblacksmith/setup-bazel@external-blob-store
         with:
           bazelisk-cache: true
           cache-version: 3
-          external-cache: |
-            manifest:
-              npm: package-lock.json
+          external-cache: true
 
       - name: Add bazel-remote directories
         run: |
